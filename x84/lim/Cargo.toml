@@ -1,0 +1,9 @@
+[package]
+name = "lim"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = "0.22"         # Or the latest version
+crossterm = "0.26"       # Or the latest version
+
