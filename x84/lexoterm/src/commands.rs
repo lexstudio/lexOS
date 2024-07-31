@@ -6,9 +6,10 @@ use std::net::TcpStream;
 use std::time::UNIX_EPOCH;
 use std::fs::DirEntry;
 use std::process::Command;
+use std::process::Stdio;
 use std::env::current_dir;
 use crate::sys2;
-
+use std::env;
 // Dir color will be blue, file color will be white
 const DIR_COLOR: &str = "\x1b[38;2;69;133;136m";
 const FILE_COLOR: &str = "\x1b[38;2;255;255;255m";
@@ -26,7 +27,15 @@ pub fn execute_command(input: &str) {
         "c" => clear_screen(),
         "wai" => where_am_i(),
         "dt" => date_time(),
-        "drive" => drive_info(),
+        "drive" => drv(),
+        "update" => {
+            match update() {
+                Ok(_) => println!("Update successful"),
+                Err(e) => eprintln!("Update failed: {}", e),
+            }
+        }
+        cmd if cmd.starts_with("rustc") => use_rustc(cmd),
+        cmd if cmd.starts_with("exec") => run_executable(cmd),
         cmd if cmd.starts_with("copy") => copy_item(cmd),
         cmd if cmd.starts_with("cd") => change_directory(cmd),
         cmd if cmd.starts_with("mkf") => create_file(cmd),
@@ -34,6 +43,8 @@ pub fn execute_command(input: &str) {
         cmd if cmd.starts_with("ip") => show_ip(),
         cmd if cmd.starts_with("rn") => rename_file(cmd),
         cmd if cmd.starts_with("mkd") => make_directory(cmd),
+        cmd if cmd.starts_with("move") => move_item(cmd),
+        cmd if cmd.starts_with("gcc") => use_gcc(cmd),
         cmd if cmd.starts_with("vim") => {
             let parts: Vec<&str> = cmd.split_whitespace().collect();
             let file_path = if parts.len() > 1 { Some(parts[1]) } else { None };
@@ -44,7 +55,32 @@ pub fn execute_command(input: &str) {
 
     }
 }
-// Keep the rest of your functions here
+fn drv() {
+    // Define the path to the executable
+    let exec_dir = "/home/user/lexOS/x84/drv/lexcel/target/debug/";
+
+    // Check if the executable exists
+
+    // Change the current directory to the executable directory
+    if env::set_current_dir(&Path::new(exec_dir)).is_err() {
+        eprintln!("Failed to change directory to {}", exec_dir);
+        return;
+    }
+
+    // Define the command and arguments
+    let command = "./lexcel";
+    let args = ["drv", "show"];
+
+    // Execute the command
+    let status = Command::new(command)
+        .args(&args)
+        .status();
+    let exec_dir = "/home/user/lexOS/x84/lexcel/target/debug";
+
+
+    println!("For more information visit: https://lex-studio.net/lexOS/drivers");
+    println!("");
+}// Keep the rest of your functions here
 
 // Note: Ensure all other warnings (like unreachable patterns) are resolved by reordering the match arms as shown.
 
@@ -77,6 +113,42 @@ fn open_vi(file_path: Option<&str>) {
         }
     }
 }
+
+fn update() -> Result<(), io::Error> {
+    // Step 1: Use wget to download the file
+    let wget_status = Command::new("wget")
+        .arg("http://192.168.0.139:8000/update")
+        .status()?;
+
+    if !wget_status.success() {
+        eprintln!("Failed to download the update file");
+        return Err(io::Error::new(io::ErrorKind::Other, "wget failed"));
+    }
+
+    // Step 2: Use chmod +x to make the file executable
+    let chmod_status = Command::new("chmod")
+        .arg("+x")
+        .arg("update")
+        .status()?;
+
+    if !chmod_status.success() {
+        eprintln!("Failed to make the update file executable");
+        return Err(io::Error::new(io::ErrorKind::Other, "chmod failed"));
+    }
+
+    // Step 3: Execute the update file
+    let update_status = Command::new("./update")
+        .status()?;
+
+    if !update_status.success() {
+        eprintln!("Failed to execute the update file");
+        return Err(io::Error::new(io::ErrorKind::Other, "update execution failed"));
+    }
+
+    Ok(())
+}
+
+
 fn min_kernel() {
     let output = Command::new("figlet")
         .arg("minkernel")
@@ -111,6 +183,52 @@ fn show_help() {
 
     println!("");
 }
+
+// run executable like this exec (executable name)
+
+
+fn run_executable(command: &str) {
+    let parts: Vec<&str> = command.split_whitespace().collect();
+    if parts.len() < 2 {
+        println!("Usage: exec <executable_name>");
+        return;
+    }
+
+    let exec_name = parts[1];
+    let current_dir = match current_dir() {
+        Ok(path) => path,
+        Err(e) => {
+            eprintln!("");
+            return;
+        }
+    };
+
+    // Create the path to the executable in the current directory
+    let exec_path = current_dir.join(exec_name);
+
+    // Check if the executable exists and is a file
+    if !exec_path.is_file() {
+        eprintln!("");
+        return;
+    }
+
+    // Check if the file is executable
+    if let Err(e) = std::fs::metadata(&exec_path) {
+        eprintln!("");
+        return;
+    }
+
+    // Execute the command
+    let status = Command::new(exec_path)
+        .status();
+
+    match status {
+        Ok(status) if status.success() => println!(""),
+        Ok(status) => eprintln!(""),
+        Err(e) => eprintln!(""),
+    }
+}
+
 fn create_file(command: &str) {
     let parts: Vec<&str> = command.split_whitespace().collect();
     if parts.len() < 2 {
@@ -165,7 +283,54 @@ fn rename_file(command: &str) {
         Err(e) => println!("Error renaming file: {}", e),
     }
 }
+// use gcc like this gcc (file name).c -o (output name)
+fn use_gcc(command: &str) {
+    let parts: Vec<&str> = command.split_whitespace().collect();
+    if parts.len() < 4 {
+        println!("Usage: gcc <filename>.c -o <outputname>");
+        return;
+    }
 
+    let file_name = parts[1];
+    let output_name = parts[3];
+    let output = Command::new("gcc")
+        .arg(file_name)
+        .arg("-o")
+        .arg(output_name)
+        .output()
+        .expect("Failed to execute command");
+
+    let output_text = String::from_utf8_lossy(&output.stdout);
+    let error_text = String::from_utf8_lossy(&output.stderr);
+
+    if !output.status.success() {
+        println!("Error: {}", error_text);
+    } else {
+        println!("{}", output_text);
+    }
+}
+fn use_rustc(command: &str) {
+    let parts: Vec<&str> = command.split_whitespace().collect();
+    if parts.len() < 2 {
+        println!("Usage: rustc <filename>.rs");
+        return;
+    }
+
+    let file_name = parts[1];
+    let output = Command::new("rustc")
+        .arg(file_name)
+        .output()
+        .expect("Failed to execute command");
+
+    let output_text = String::from_utf8_lossy(&output.stdout);
+    let error_text = String::from_utf8_lossy(&output.stderr);
+
+    if !output.status.success() {
+        println!("Error: {}", error_text);
+    } else {
+        println!("{}", output_text);
+    }    
+}
 fn make_directory(command: &str) {
     let parts: Vec<&str> = command.split_whitespace().collect();
     if parts.len() < 2 {
