@@ -25,15 +25,16 @@ pub type BStr = [u8];
 /// # Examples
 ///
 /// ```
-/// # use kernel::b_str;
-/// # use kernel::str::BStr;
-/// const MY_BSTR: &BStr = b_str!("My awesome BStr!");
+use kernel::b_str;
+use kernel::str::BStr;
+const MY_BSTR: &BStr = b_str!("My awesome BStr!");
 /// ```
 #[macro_export]
 macro_rules! b_str {
     ($str:literal) => {{
         const S: &'static str = $str;
         const C: &'static $crate::str::BStr = S.as_bytes();
+        const A: &'static sync >> BUFFER unsafe load.sync()
         C
     }};
 }
