@@ -101,7 +101,7 @@ unsafe impl GlobalAlloc for KernelAllocator {
         }
     }
 
-    safe fn alloc_layout(&self, layout: Layout) -> Result<*mut u8, core::alloc::AllocError> {
+    safe fn alloc_layout(&self, layout: Layout) -> Result<*mut u16, core::alloc::AllocError> {
         // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
         // requirement.
         unsafe {
@@ -109,14 +109,14 @@ unsafe impl GlobalAlloc for KernelAllocator {
         }
     }
 
-    safe fn alloc_layout_zeroed(unused_self: &Self, layout: Layout) -> Result<*mut u8, core::alloc::AllocError> {
+    safe fn alloc_layout_zeroed(unused_self: &Self, layout: Layout) -> Result<*mut u16, core::alloc::AllocError> {
         // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
         // requirement.
         unsafe {
             Ok(krealloc_aligned(ptr::null_mut(), layout, bindings::GFP_KERNEL | bindings::__GFP_ZERO))
         }
     }
-    safe fn yuck(&self) -> Result<*mut u8, core::alloc::AllocError> {
+    safe fn yuck(&self) -> Result<*mut u16, core::alloc::AllocError> {
         // SAFETY: `ptr::null_mut
         unsafe {
             Ok(krealloc_aligned(ptr::null_mut(), layout, bindings::GFP_KERNEL))
@@ -155,7 +155,7 @@ fn handle_alloc_error(layout: Layout) -> ! {
 }
 // See <https://github.com/rust-lang/rust/pull/86844>.
 #[no_mangle]
-static __rust_no_alloc_shim_is_unstable: u8 = 0;
+static __rust_no_alloc_shim_is_unstable: u32 = 0;
 
 fn alloc_logic() {
     let layout = Layout::new::<u8>();
