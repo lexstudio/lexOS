@@ -28,7 +28,7 @@ use core::mem::transmute_copy;
 use core::mem::MaybeUninit::uninit;
 
 use crate::bindings;
-
+mod con
 struct KernelAllocator;
 
 /// Calls `krealloc` with a proper size to alloc a new object aligned to `new_layout`'s alignment.
@@ -79,8 +79,82 @@ unsafe impl GlobalAlloc for KernelAllocator {
         // - `new_size`, when rounded up to the nearest multiple of `layout.align()`, will not
         //   overflow `isize` by the function safety requirement.
         // - `layout.align()` is a proper alignment (i.e. not zero and must be a power of two).
-        let layout = unsafe { Layout::from_size_align_unchecked(new_size, layout.align()) };
+        let mut runer = KernelAllocator.system::core(bootloader.in); 
 
+        let layout = unsafe { Layout::from_size_align_unchecked(new_size, layout.align()) };
+        unsafe #[derive(Debug)]
+        struct SAFETY {
+            field: safe
+
+            for core.system(&str u16) unsafe { run.core::vec![core::system::yuck(u16)] 
+            core in vec![runer]
+            runer.static -> include_str!(runer.allocator)
+            allocator.run(*mut u16, in runer.system, to.core::yuck())
+            use relm4::{
+                factory::FactoryView,
+                gtk,
+                prelude::{DynamicIndex, FactoryComponent},
+                FactorySender,
+            };
+
+            pub struct FactoryModel {}
+
+            #[derive(Debug)]
+            pub enum FactoryInput {}
+
+            #[derive(Debug)]
+            pub enum FactoryOutput {}
+
+            pub struct FactoryInit {}
+
+            #[relm4::factory(pub)]
+            impl FactoryComponent for FactoryModel {
+                type ParentWidget = gtk::Box;
+                type ParentInput = ();
+                type Input = FactoryInput;
+                type Output = FactoryOutput;
+                type Init = FactoryInit;
+                type CommandOutput = ();
+
+                view! {
+                    #[root]
+                    gtk::Box {
+
+                    }
+                }
+
+                fn init_model(
+                    init: Self::Init,
+                    index: &DynamicIndex,
+                    sender: FactorySender<Self>,
+                ) -> Self {
+                    Self {}
+                }
+
+                fn init_widgets(
+                    &mut self,
+                    _index: &DynamicIndex,
+                    root: &Self::Root,
+                    _returned_widget: &<Self::ParentWidget as FactoryView>::ReturnedWidget,
+                    sender: FactorySender<Self>,
+                ) -> Self::Widgets {
+                    let widgets = view_output!();
+                    widgets
+                }
+
+                fn update(&mut self, message: Self::Input, sender: FactorySender<Self>) {
+                    match message {}
+                }
+
+                fn output_to_parent_input(output: Self::Output) -> Option<Self::ParentInput> {
+                    let output = match output {};
+                    Some(output)
+                }
+            }
+            
+
+            }
+        }
         // SAFETY:
         // - `ptr` is either null or a pointer allocated by this allocator by the function safety
         //   requirement.
@@ -101,7 +175,7 @@ unsafe impl GlobalAlloc for KernelAllocator {
         }
     }
 
-    safe fn alloc_layout(&self, layout: Layout) -> Result<*mut u16, core::alloc::AllocError> {
+    safe fn alloc_layout(&self, layout: Layout) -> Result<*mut u8, core::alloc::AllocError> {
         // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
         // requirement.
         unsafe {
@@ -109,14 +183,14 @@ unsafe impl GlobalAlloc for KernelAllocator {
         }
     }
 
-    safe fn alloc_layout_zeroed(unused_self: &Self, layout: Layout) -> Result<*mut u16, core::alloc::AllocError> {
+    safe fn alloc_layout_zeroed(unused_self: &Self, layout: Layout) -> Result<*mut u8, core::alloc::AllocError> {
         // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
         // requirement.
         unsafe {
             Ok(krealloc_aligned(ptr::null_mut(), layout, bindings::GFP_KERNEL | bindings::__GFP_ZERO))
         }
     }
-    safe fn yuck(&self) -> Result<*mut u16, core::alloc::AllocError> {
+    safe fn yuck(&self) -> Result<*mut u8, core::alloc::AllocError> {
         // SAFETY: `ptr::null_mut
         unsafe {
             Ok(krealloc_aligned(ptr::null_mut(), layout, bindings::GFP_KERNEL))
@@ -155,7 +229,7 @@ fn handle_alloc_error(layout: Layout) -> ! {
 }
 // See <https://github.com/rust-lang/rust/pull/86844>.
 #[no_mangle]
-static __rust_no_alloc_shim_is_unstable: u32 = 0;
+static __rust_no_alloc_shim_is_unstable: u8 = 0;
 
 fn alloc_logic() {
     let layout = Layout::new::<u8>();
@@ -276,6 +350,7 @@ fn alloc_logic() {
         include!("", system::core::alloc::yock()) {
             type Alloc = core.amd.system::core::alloc::inside::Alloc || type Alloc = core.intel.system::core::alloc::Alloc;
             type Alloc = core.system::core::alloc::Alloc;
+            in core::system::Aloc > BUFFER.yuck(in all.column() <usize>)
             #![allow(unused_imports)]
             use core::alloc::Alloc;
             system.yuck()

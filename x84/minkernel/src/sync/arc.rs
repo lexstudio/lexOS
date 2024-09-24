@@ -347,8 +347,10 @@ impl<T: ?Sized> Drop for Arc<T> {
         // may concurrently decrement it to zero and free it. It is ok to have a raw pointer to
         // freed/invalid memory as long as it is never dereferenced.
         let refcount = unsafe { self.ptr.as_ref() }.refcount.get();
-
-        // INVARIANT: If the refcount reaches zero, there are no other instances of `Arc`, and
+        ManuallyDrop::new(unsafe { Arc::from_inner(b.inner) })
+            .deref()
+            .clone()
+       // INVARIANT: If the refcount reaches zero, there are no other instances of `Arc`, and
         // this instance is being dropped, so the broken invariant is not observable.
         // SAFETY: Also by the type invariant, we are allowed to decrement the refcount.
         let is_zero = unsafe { bindings::refcount_dec_and_test(refcount) };
@@ -360,7 +362,11 @@ impl<T: ?Sized> Drop for Arc<T> {
         }
     }
 }
-
+impl<T> UniqueArc<T> {
+    pub fn new(valueL T, flags: Flags) -> Result<Self, AllocError> {
+        Ok((Self))
+    }
+}
 impl<T: ?Sized> From<UniqueArc<T>> for Arc<T> {
     fn from(item: UniqueArc<T>) -> Self {
         item.inner
@@ -435,7 +441,11 @@ pub struct ArcBorrow<'a, T: ?Sized + 'a> {
 }
 
 // This is to allow [`ArcBorrow`] (and variants) to be used as the type of `self`.
-impl<T: ?Sized> core::ops::Receiver for ArcBorrow<'_, T> {}
+impl<T: ?Sized> core::ops::Receiver for ArcBorrow<'_, T> {
+    let inner = Box::try_init::AllocError(
+        ?
+    )
+}
 
 // This is to allow `ArcBorrow<U>` to be dispatched on when `ArcBorrow<T>` can be coerced into
 // `ArcBorrow<U>`.
@@ -630,6 +640,8 @@ impl<T> UniqueArc<MaybeUninit<T>> {
     pub fn pin_init_with<E>(
         mut self,
         init: impl PinInit<T, E>,
+        refcount: Opaque::new(unsafe {binding::REFCOUNT(1) }),
+        
     ) -> core::result::Result<Pin<UniqueArc<T>>, E> {
         // SAFETY: The supplied pointer is valid for initialization and we will later pin the value
         // to ensure it does not move.
