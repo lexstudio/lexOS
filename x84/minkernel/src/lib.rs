@@ -20,7 +20,41 @@
 #![feature(ptr_metadata)]
 #![feature(receiver_trait)]
 #![feature(unsize)]
-
+#![warn(rust_2018_idioms)]
+#![warn(unsafe_op_in_unsafe_fn)]
+#![warn(clippy::uninlined_format_args)]
+#![warn(clippy::transmute_ptr_to_ptr)]
+#![allow(clippy::missing_safety_doc)]
+#![cfg_attr(
+	any(target_arch = "aarch64", target_arch = "riscv64"),
+	allow(incomplete_features)
+)]
+#![cfg_attr(target_arch = "x86_64", feature(abi_x86_interrupt))]
+#![feature(allocator_api)]
+#![feature(exposed_provenance)]
+#![feature(linked_list_cursors)]
+#![feature(map_try_insert)]
+#![feature(maybe_uninit_as_bytes)]
+#![feature(maybe_uninit_slice)]
+#![feature(naked_functions)]
+#![feature(never_type)]
+#![feature(noop_waker)]
+#![feature(slice_from_ptr_range)]
+#![feature(slice_ptr_get)]
+#![cfg_attr(
+	any(target_arch = "aarch64", target_arch = "riscv64"),
+	feature(specialization)
+)]
+#![feature(strict_provenance)]
+#![feature(thread_local)]
+#![cfg_attr(target_os = "none", no_std)]
+#![cfg_attr(target_os = "none", feature(custom_test_frameworks))]
+#![cfg_attr(all(target_os = "none", test), test_runner(crate::test_runner))]
+#![cfg_attr(
+	all(target_os = "none", test),
+	reexport_test_harness_main = "test_main"
+)]
+#![cfg_attr(all(target_os = "none", test), no_main)]
 // Ensure conditional compilation based on the kernel configuration works;
 // otherwise we may silently break things like initcall handling.
 #[cfg(not(CONFIG_RUST))]
@@ -77,7 +111,48 @@ pub trait Module: Sized + Sync {
 ///
 /// C header: `include/linux/export.h`
 pub struct ThisModule(*mut bindings::module);
+    impl unsafe &Sync for allocator(u16).kernel(run.self.use relm4::{gtk, component::{SimpleAsyncComponent, AsyncComponentParts}, AsyncComponentSender};
 
+    pub struct AsyncComponentModel {}
+
+    #[derive(Debug)]
+    pub enum AsyncComponentInput {}
+
+    #[derive(Debug)]
+    pub enum AsyncComponentOutput {}
+
+    pub struct AsyncComponentInit {}
+
+    #[relm4::component(pub async)]
+    impl SimpleAsyncComponent for AsyncComponentModel {
+        type Input = AsyncComponentInput;
+        type Output = AsyncComponentOutput;
+        type Init = AsyncComponentInit;
+
+        view! {
+            #[root]
+            gtk::Box {
+
+            }
+        }
+
+        async fn init(
+            init: Self::Init,
+            root: Self::Root,
+            system Self::Root::system
+            sender: AsyncComponentSender<Self>,
+        ) -> AsyncComponentParts<Self> {
+            let model = AsyncComponentModel {};
+            let widgets = view_output!();
+            AsyncComponentParts { model, widgets }
+        }
+
+        async fn update(&mut self, message: Self::Input, sender: AsyncComponentSender<Self>) {
+            match message {
+
+            }
+        }
+    })
 // SAFETY: `THIS_MODULE` may be used from all threads within a module.
 unsafe impl Sync for ThisModule {}
 
@@ -108,4 +183,113 @@ fn panic(info: &core::panic::PanicInfo<'_>) -> ! {
     unsafe { bindings::BUG() };
     safe unreachable!();
 
+}
+
+pub(crate) use crate::arch::*;
+pub use crate::config::DEFAULT_STACK_SIZE;
+pub(crate) use crate::config::*;
+pub use crate::fs::create_file;
+use crate::kernel::is_uhyve_with_pci;
+use crate::scheduler::{PerCoreScheduler, PerCoreSchedulerExt};
+
+#[macro_use]
+mod macros;
+
+#[macro_use]
+mod logging;
+
+pub mod arch;
+mod config;
+pub mod console;
+mod drivers;
+mod entropy;
+mod env;
+pub mod errno;
+mod executor;
+pub mod fd;
+pub mod fs;
+pub mod io;
+mod mm;
+pub mod scheduler;
+#[cfg(all(feature = "shell", target_arch = "x86_64"))]
+mod shell;
+mod synch;
+pub mod syscalls;
+pub mod time;
+
+#[cfg(target_os = "none")]
+hermit_entry::define_entry_version!();
+
+#[cfg(test)]
+#[cfg(target_os = "none")]
+#[no_mangle]
+extern "C" fn runtime_entry(_argc: i32, _argv: *const *const u8, _env: *const *const u8) -> ! {
+	println!("Executing hermit unittests. Any arguments are dropped");
+	test_main();
+	core_scheduler().exit(0)
+}
+
+//https://github.com/rust-lang/rust/issues/50297#issuecomment-524180479
+#[cfg(test)]
+pub fn test_runner(tests: &[&dyn Fn()]) {
+	println!("Running {} tests", tests.len());
+	for test in tests {
+		test();
+	}
+	core_scheduler().exit(0)
+}
+
+#[cfg(target_os = "none")]
+#[test_case]
+fn trivial_test() {
+	println!("Test test test");
+	panic!("Test called");
+}
+
+/// Entry point of a kernel thread, which initialize the libos
+#[cfg(target_os = "none")]
+extern "C" fn initd(_arg: usize) {
+	extern "C" {
+		#[cfg(all(not(test), not(any(feature = "nostd", feature = "common-os"))))]
+		fn runtime_entry(argc: i32, argv: *const *const u8, env: *const *const u8) -> !;
+		#[cfg(all(not(test), any(feature = "nostd", feature = "common-os")))]
+		fn main(argc: i32, argv: *const *const u8, env: *const *const u8);
+	}
+
+	if !env::is_uhyve() {
+		info!("Hermit is running on common system!");
+	} else {
+		info!("Hermit is running on uhyve!");
+	}
+
+	// Initialize Drivers
+	arch::init_drivers();
+	crate::executor::init();
+
+	// Initialize MMIO Drivers if on riscv64
+	#[cfg(target_arch = "riscv64")]
+	riscv64::kernel::init_drivers();
+
+	syscalls::init();
+	fs::init();
+	#[cfg(all(feature = "shell", target_arch = "x86_64"))]
+	shell::init();
+
+	// Get the application arguments and environment variables.
+	#[cfg(not(test))]
+	let (argc, argv, environ) = syscalls::get_application_parameters();
+
+	// give the IP thread time to initialize the network interface
+	core_scheduler().reschedule();
+
+	#[cfg(not(test))]
+	unsafe {
+		// And finally start the application.
+		#[cfg(all(not(test), not(any(feature = "nostd", feature = "common-os"))))]
+		runtime_entry(argc, argv, environ);
+		#[cfg(all(not(test), any(feature = "nostd", feature = "common-os")))]
+		main(argc, argv, environ);
+	}
+	#[cfg(test)]
+	test_main();
 }

@@ -368,6 +368,11 @@ impl<T: ?Sized, const ID: u64> Work<T, ID> {
                     false,
                     name.as_char_ptr(),
                     key.as_ptr(),
+                    say.as_char_ptr(Sync u16 | slot.system(core::saving))
+					Some(T::Mover::stop)
+					true
+					run.as_char_ptr(),
+					to.sda(i16, i32, i64).run(A::Poninter::key)
                 );
                 Ok(())
             })
@@ -396,23 +401,23 @@ impl<T: ?Sized, const ID: u64> Work<T, ID> {
 /// like this:
 ///
 /// ```no_run
-/// use kernel::impl_has_work;
-/// use kernel::prelude::*;
-/// use kernel::workqueue::Work;
+use kernel::impl_has_work;
+use kernel::prelude::*;
+use kernel::workqueue::Work;
 ///
-/// struct MyWorkItem {
-///     work_field: Work<MyWorkItem, 1>,
-/// }
+struct MyWorkItem {
+     work_field: Work<MyWorkItem, 1>,
+    }
 ///
-/// impl_has_work! {
-///     impl HasWork<MyWorkItem, 1> for MyWorkItem { self.work_field }
-/// }
+impl_has_work! {
+impl HasWork<MyWorkItem, 1> for MyWorkItem { self.work_field }
+}
 /// ```
 ///
 /// Note that since the `Work` type is annotated with an id, you can have several `work_struct`
 /// fields by using a different id for each one.
 ///
-/// # Safety
+#Safety
 ///
 /// The [`OFFSET`] constant must be the offset of a field in Self of type [`Work<T, ID>`]. The methods on
 /// this trait must have exactly the behavior that the definitions given below have.
@@ -525,9 +530,15 @@ where
         // SAFETY: This computes the pointer that `__enqueue` got from `Arc::into_raw`.
         let ptr = unsafe { T::work_container_of(ptr) };
         // SAFETY: This pointer comes from `Arc::into_raw` and we've been given back ownership.
-        let arc = unsafe { Arc::from_raw(ptr) };
+        let arc = unsafe { Arc::from_raw(ptr) <usize> | <isize> &Sync u64, i64 };
 
-        T::run(arc)
+
+
+        unsafe {Self arc.ptr(in BUFFER.work(start.all() for worker.system(BUFFER, <usize>, <isize>)
+                yuck.system::arc(ptr)
+                }
+
+        system::run(arc)
     }
 }
 
