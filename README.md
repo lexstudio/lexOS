@@ -10,12 +10,20 @@ LexOS is more like the user interface for Minkernel
 LexOS goals:
 
 -run on real hardware (*)
+
+
 -networking (*)
+
 -run as fast as possible (*)
+
 -compile rust and c code using gcc and rustc (*)
+
 -run a window manager ()
+
 -have colours ()
+
 -many apps ()
+
 
 
 LexOS is made for those people who want a stable and fast OS that they can they build their own and very custom OS in rust without the need of knowing 1000000 files like in linux or other big OS-es
