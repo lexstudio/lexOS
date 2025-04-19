@@ -24,6 +24,7 @@ LexOS goals:
 
 -many apps ()
 
+The best thing about minkernel and lexOS in general is that the kernel has an "setting" aplication where you can edit a lot of things  about the process power and support (more at )
 
 
 LexOS is made for those people who want a stable and fast OS that they can they build their own and very custom OS in rust without the need of knowing 1000000 files like in linux or other big OS-es
