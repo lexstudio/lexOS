@@ -1,30 +1,49 @@
-Well lexOS is the next gen Operating System
+The purpose of lexOS is to be a fast, minimal, and efficient operating system specifically designed to run one powerful application at a time. It’s built from the ground up, focusing on performance, customizability, and full control over the system’s resources.
 
-LexOS is written in rust but if i do my own programing language i will rewrite it in it
-LexOS is as fast as possible using memory blocks at their max with a custom memory blocks handler (named u or i)
+Key Goals of lexOS:
 
-Minkernel is the kernel that runs this OS its preatty stable but in general it is made for maximum speed
-Minkernel has an editing tool build into it so you dont need to know how kernels work just to change some things up (but if you want to make custom things then you need to do it)
-LexOS is more like the user interface for Minkernel
-
-LexOS goals:
-
--run on real hardware (*)
+1. Minimal Kernel (minkernel):
+The core of lexOS is extremely lightweight, handling only essential tasks like memory management, CPU control, and basic hardware interaction.
 
 
--networking (*)
+2. One App Focus:
+Unlike traditional OSes that run multiple apps, lexOS is designed to allocate all system resources to a single application, making it ideal for specialized tasks like:
 
--run as fast as possible (*)
+High-performance computing
 
--compile rust and c code using gcc and rustc (*)
+Embedded systems
 
--run a window manager ()
+Dedicated server applications
 
--have colours ()
-
--many apps ()
-
-The best thing about minkernel and lexOS in general is that the kernel has an "setting" aplication where you can edit a lot of things  about the process power and support (more at https://lexstudio.github.io/lexOS-website/documentation.html)
+Real-time processing tasks
 
 
-LexOS is made for those people who want a stable and fast OS that they can they build their own and very custom OS in rust without the need of knowing 1000000 files like in linux or other big OS-es
+
+3. Customizability:
+Users can configure buffer sizes, memory settings, and CPU core usage to match the specific needs of the application. It even supports choosing between signed (i) and unsigned (u) data types for performance tuning.
+
+
+4. Language Support:
+
+Originally written in Rust, with support for applications written in C, Python, and potentially V or L (the user's custom language).
+
+Future extensions allow users to build kernel-level tools and apps.
+
+
+
+5. Performance Optimization:
+lexOS is built to outperform traditional OSes like Linux in specific benchmarks by focusing only on what’s necessary for a single app, removing unnecessary overhead.
+
+
+6. Target Devices:
+
+Can run on PCs, Raspberry Pi, and ARM-based laptops.
+
+Designed to be portable across architectures, with a custom VM (Lexium) for ARM-to-x86 translation.
+
+
+
+
+lexOS is for developers who want maximum control and efficiency when running dedicated systems or high-performance apps. It's about stripping away general-purpose bloat and giving full power to one app.
+
+https://lexstudio.github.io/lexOS-website/
