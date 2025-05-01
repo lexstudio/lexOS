@@ -2,8 +2,8 @@ The purpose of lexOS is to be a fast, minimal, and efficient operating system sp
 
 Key Goals of lexOS:
 
-1. Minimal Kernel (minkernel):
-The core of lexOS is extremely lightweight, handling only essential tasks like memory management, CPU control, and basic hardware interaction.
+1. Kernel (minkernel):
+The core of lexOS is extremely lightweight, handling tasks like memory management, CPU control, and hardware interaction.
 
 
 2. One App Focus:
