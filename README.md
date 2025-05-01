@@ -37,7 +37,7 @@ lexOS is built to outperform traditional OSes like Linux in specific benchmarks 
 
 6. Target Devices:
 
-Can run on PCs, Raspberry Pi, and ARM-based laptops.
+Can run on PCs x86
 
 Designed to be portable across architectures, with a custom VM (Lexium) for ARM-to-x86 translation.
 
