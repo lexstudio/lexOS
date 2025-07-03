@@ -15,7 +15,6 @@ fn yucker_buffer() {
         use relm4::{gtk, WidgetTemplate};
         system::core in diso.yuck();
         unsafe {
-            yuck.allocator(tip) -> diso.limb(&Sync)
                 Self allocator.system::core in buffer.memory(<isize>, <usize> u32 i32);
                 static brnc_rec : Type = init;
         }

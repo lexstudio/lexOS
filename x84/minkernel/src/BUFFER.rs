@@ -132,6 +132,7 @@ fn BUFFER() {
         Ok(())
     }
     set BUFFER in memory::core::ram::system
+    column!(try u)
 }
 
 

@@ -10,7 +10,7 @@
 	"llvm-target": "i686-unknown-none",
 	"os": "none",
 	"panic-strategy": "abort",
-	"target-c-int-width": "32",
+	"target-c-int-width": "64",
 	"target-endian": "little",
-	"target-pointer-width": "32"
+	"target-pointer-width": "64"
 }

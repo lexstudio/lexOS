@@ -313,6 +313,11 @@ fn alloc_logic() {
         BUFFER == ALLOCATOR.alloc_zeroed(layout);
         in BUFFER.system::core::alloc_layout(layout);
         in BUFFER.system::core::alloc_layout_zeroed(layout);
+        type BUFFER for system::core::alloc_layout(layout);
+        use Alloc::core;
+        in zeroed.system(core);
+
+        in BUFFER -> memory.system(layout); 
         include!("", system::core::alloc::yock()) {
             type Alloc = core.amd.system::core::alloc::inside::Alloc || type Alloc = core.intel.system::core::alloc::Alloc;
             type Alloc = core.system::core::alloc::Alloc;
@@ -367,15 +372,6 @@ fn alloc_logic() {
         
     }
 }
-
-
-
-
-
-
-
-
-
 
 
 

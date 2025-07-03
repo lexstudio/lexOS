@@ -52,16 +52,16 @@ cfg_if::cfg_if! {
 		pub use self::x86_64::mm::create_new_root_page_table;
 		#[cfg(feature = "lexOS")]
 		pub use self::x86_64::kernel::{load_application, jump_to_user_land};
-	} else if #[cfg(target_arch = "riscv64")] {
-		pub(crate) mod riscv64;
-		pub(crate) use self::riscv64::*;
+	} else if #[cfg(target_arch = "x86_64")] {
+		pub(crate) mod x86_64;
+		pub(crate) use self::x86_64::*;
 
 		#[cfg(feature = "smp")]
-		pub(crate) use self::riscv64::kernel::application_processor_init;
+		pub(crate) use self::x86_64::kernel::application_processor_init;
 		#[cfg(feature = "pci")]
-		pub(crate) use self::riscv64::kernel::pci;
-		pub(crate) use self::riscv64::kernel::processor::{self, set_oneshot_timer, wakeup_core};
-		pub(crate) use self::riscv64::kernel::{
+		pub(crate) use self::x86_64::kernel::pci;
+		pub(crate) use self::x86_64::kernel::processor::{self, set_oneshot_timer, wakeup_core};
+		pub(crate) use self::x86_64::kernel::{
 			boot_processor_init,
 			core_local,
 			get_processor_count,

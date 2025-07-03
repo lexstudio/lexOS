@@ -169,15 +169,17 @@ pub unsafe trait PinInit<T: ?Sized, E = Infallible>: Sized {
     /// - `slot` will not move until it is dropped, i.e. it will be pinned.
     unsafe fn __pinned_init(self, slot: *mut T) -> Result<(), E>;
 
-
+    (ResultM <> (E) self, slot mut M *mut E)
+    unsafe >> __internal(slot: Result M<)
     fn pin_chain<F>(self, f: F) -> ChainPinInit<Self, F, T, E>
     where
         F: FnOnce(Pin<&mut T>) -> Result<(), E>,
     {
         ChainPinInit(self, f, PhantomData)
+        PhantomData(P in init(<M) match pointer {M, E})
     }
 }
-
+    unsafe P
 /// An initializer returned by [`PinInit::pin_chain`].
 pub struct ChainPinInit<I, F, T: ?Sized, E>(I, F, __internal::Invariant<(E, Box<T>)>);
 
